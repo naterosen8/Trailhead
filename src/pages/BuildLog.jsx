@@ -7,23 +7,41 @@ export default function BuildLog() {
   const [entries, setEntries] = usePersistentState('trailhead:logs', [])
   const [form, setForm] = useState(EMPTY_FORM)
   const [showForm, setShowForm] = useState(entries.length === 0)
+  const [editingId, setEditingId] = useState(null)
 
   function submit(e) {
     e.preventDefault()
     if (!form.title.trim()) return
-    const entry = {
-      id: uid(),
-      week: entries.length + 1,
-      date: new Date().toISOString().slice(0, 10),
-      ...form,
+    if (editingId) {
+      setEntries(entries.map((entry) => (entry.id === editingId ? { ...entry, ...form } : entry)))
+    } else {
+      const entry = {
+        id: uid(),
+        week: entries.length + 1,
+        date: new Date().toISOString().slice(0, 10),
+        ...form,
+      }
+      setEntries([entry, ...entries])
     }
-    setEntries([entry, ...entries])
+    closeForm()
+  }
+
+  function startEdit(entry) {
+    setForm({ title: entry.title, did: entry.did, learned: entry.learned, struggled: entry.struggled, next: entry.next })
+    setEditingId(entry.id)
+    setShowForm(true)
+  }
+
+  function closeForm() {
     setForm(EMPTY_FORM)
+    setEditingId(null)
     setShowForm(false)
   }
 
   function removeEntry(id) {
+    if (!window.confirm('Delete this entry? This can\'t be undone.')) return
     setEntries(entries.filter((e) => e.id !== id))
+    if (editingId === id) closeForm()
   }
 
   return (
@@ -68,12 +86,12 @@ export default function BuildLog() {
             <textarea rows={2} value={form.next} onChange={(e) => setForm({ ...form, next: e.target.value })} />
           </div>
           <div className="form-actions">
-            {entries.length > 0 && (
-              <button type="button" className="btn-ghost" onClick={() => setShowForm(false)}>
+            {(entries.length > 0 || editingId) && (
+              <button type="button" className="btn-ghost" onClick={closeForm}>
                 Cancel
               </button>
             )}
-            <button type="submit" className="btn-primary">Post entry</button>
+            <button type="submit" className="btn-primary">{editingId ? 'Save changes' : 'Post entry'}</button>
           </div>
         </form>
       )}
@@ -89,6 +107,7 @@ export default function BuildLog() {
             <div className="wp-head">
               <span className="wk">Week {String(entry.week).padStart(2, '0')} · {entry.date}</span>
               <h4>{entry.title}</h4>
+              <button className="btn-ghost btn-small" onClick={() => startEdit(entry)}>Edit</button>
               <button className="btn-remove" onClick={() => removeEntry(entry.id)} aria-label="Delete entry">×</button>
             </div>
             <div className="wp-body">
