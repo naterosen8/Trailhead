@@ -1,17 +1,35 @@
-import { useState } from 'react'
-import { usePersistentState, uid } from '../lib/storage'
+import { useEffect, useState } from 'react'
 import { computeStreak, daysSinceLastEntry } from '../lib/streak'
+import { createEntry, deleteEntry, listEntries, updateEntry } from '../lib/db'
+import { useAuth } from '../lib/AuthContext'
 
 const EMPTY_FORM = { title: '', did: '', learned: '', struggled: '', next: '' }
 
 export default function BuildLog() {
-  const [entries, setEntries] = usePersistentState('trailhead:logs', [])
+  const { user } = useAuth()
+  const [entries, setEntries] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const [form, setForm] = useState(EMPTY_FORM)
-  const [showForm, setShowForm] = useState(entries.length === 0)
+  const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [formError, setFormError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  function submit(e) {
+  useEffect(() => {
+    let cancelled = false
+    listEntries(user.id)
+      .then((rows) => {
+        if (cancelled) return
+        setEntries(rows)
+        if (rows.length === 0) setShowForm(true)
+      })
+      .catch((err) => !cancelled && setLoadError(err.message || 'Could not load your build log.'))
+      .finally(() => !cancelled && setLoading(false))
+    return () => { cancelled = true }
+  }, [user.id])
+
+  async function submit(e) {
     e.preventDefault()
     if (!form.title.trim()) {
       setFormError('Give the entry a title.')
@@ -22,18 +40,21 @@ export default function BuildLog() {
       return
     }
     setFormError('')
-    if (editingId) {
-      setEntries(entries.map((entry) => (entry.id === editingId ? { ...entry, ...form } : entry)))
-    } else {
-      const entry = {
-        id: uid(),
-        week: entries.length + 1,
-        date: new Date().toISOString().slice(0, 10),
-        ...form,
+    setSubmitting(true)
+    try {
+      if (editingId) {
+        await updateEntry(editingId, form)
+        setEntries(entries.map((entry) => (entry.id === editingId ? { ...entry, ...form } : entry)))
+      } else {
+        const created = await createEntry(user.id, form, entries.length + 1)
+        setEntries([created, ...entries])
       }
-      setEntries([entry, ...entries])
+      closeForm()
+    } catch (err) {
+      setFormError(err.message || 'Could not save that entry — try again.')
+    } finally {
+      setSubmitting(false)
     }
-    closeForm()
   }
 
   function startEdit(entry) {
@@ -49,10 +70,31 @@ export default function BuildLog() {
     setFormError('')
   }
 
-  function removeEntry(id) {
+  async function removeEntry(id) {
     if (!window.confirm('Delete this entry? This can\'t be undone.')) return
-    setEntries(entries.filter((e) => e.id !== id))
-    if (editingId === id) closeForm()
+    try {
+      await deleteEntry(id)
+      setEntries(entries.filter((e) => e.id !== id))
+      if (editingId === id) closeForm()
+    } catch (err) {
+      window.alert(err.message || 'Could not delete that entry — try again.')
+    }
+  }
+
+  if (loading) {
+    return (
+      <section className="wrap page">
+        <p className="empty-note">Loading your build log…</p>
+      </section>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <section className="wrap page">
+        <p className="form-error" role="alert">{loadError}</p>
+      </section>
+    )
   }
 
   const streak = computeStreak(entries)
@@ -116,11 +158,13 @@ export default function BuildLog() {
           {formError && <p className="form-error" role="alert">{formError}</p>}
           <div className="form-actions">
             {(entries.length > 0 || editingId) && (
-              <button type="button" className="btn-ghost" onClick={closeForm}>
+              <button type="button" className="btn-ghost" onClick={closeForm} disabled={submitting}>
                 Cancel
               </button>
             )}
-            <button type="submit" className="btn-primary">{editingId ? 'Save changes' : 'Post entry'}</button>
+            <button type="submit" className="btn-primary" disabled={submitting}>
+              {submitting ? 'Saving…' : editingId ? 'Save changes' : 'Post entry'}
+            </button>
           </div>
         </form>
       )}

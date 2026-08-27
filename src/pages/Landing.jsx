@@ -68,8 +68,8 @@ export default function Landing() {
               <span className="step-icon">
                 <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="1" /><path d="M3 9h18" /><path d="M8 21h8" /></svg>
               </span>
-              <h3>Your data leaves with you</h3>
-              <p>Everything lives in your browser and exports to a single file whenever you want it — no lock-in, no account required to try it.</p>
+              <h3>Your account, your data</h3>
+              <p>One free account syncs your dashboard across every device — and it exports to a single file whenever you want a backup. No lock-in.</p>
             </div>
           </div>
         </section>
@@ -85,6 +85,7 @@ export default function Landing() {
             <div className="roadmap-col">
               <div className="roadmap-label live">Live today</div>
               <ul>
+                <li>Real accounts — your dashboard syncs across devices</li>
                 <li>Editable life-dashboard profile</li>
                 <li>Build log with create, edit, and delete</li>
                 <li>Automatic posting-streak tracking</li>

@@ -1,13 +1,12 @@
-const KEYS = ['trailhead:profile', 'trailhead:logs']
+import { getProfile, insertEntry, listEntries, profileFromRow, saveProfile } from './db'
 
-export function exportData() {
+export async function exportData(userId) {
+  const [profileRow, logs] = await Promise.all([getProfile(userId), listEntries(userId)])
   const payload = {
     format: 'trailhead-export',
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
-    data: Object.fromEntries(
-      KEYS.map((key) => [key, JSON.parse(window.localStorage.getItem(key) || 'null')])
-    ),
+    data: { profile: profileFromRow(profileRow), logs },
   }
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -20,26 +19,30 @@ export function exportData() {
   URL.revokeObjectURL(url)
 }
 
-export function importData(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onerror = () => reject(new Error('Could not read that file.'))
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(reader.result)
-        if (parsed.format !== 'trailhead-export' || !parsed.data) {
-          throw new Error('Not a Trailhead backup file.')
-        }
-        for (const key of KEYS) {
-          if (key in parsed.data && parsed.data[key] != null) {
-            window.localStorage.setItem(key, JSON.stringify(parsed.data[key]))
-          }
-        }
-        resolve()
-      } catch (err) {
-        reject(err instanceof Error ? err : new Error('Could not parse that file.'))
-      }
-    }
-    reader.readAsText(file)
-  })
+// Restoring a backup upserts the profile and appends the backup's log entries
+// as new rows — it never deletes existing data, so it's safe to run more than once.
+export async function importData(file, userId) {
+  const text = await file.text()
+  let parsed
+  try {
+    parsed = JSON.parse(text)
+  } catch {
+    throw new Error('That file is not valid JSON.')
+  }
+  if (parsed.format !== 'trailhead-export' || !parsed.data) {
+    throw new Error('Not a Trailhead backup file.')
+  }
+
+  if (parsed.data.profile) {
+    await saveProfile(userId, parsed.data.profile)
+  }
+
+  const logs = Array.isArray(parsed.data.logs) ? parsed.data.logs : []
+  const existing = await listEntries(userId)
+  let week = existing.length
+  for (const entry of logs) {
+    week += 1
+    await insertEntry(userId, { ...entry, week, date: entry.date || new Date().toISOString().slice(0, 10) })
+  }
+  return { restoredEntries: logs.length }
 }

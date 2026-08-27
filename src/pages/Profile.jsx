@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { usePersistentState, uid } from '../lib/storage'
+import { useEffect, useState } from 'react'
+import { uid } from '../lib/storage'
+import { getProfile, profileFromRow, saveProfile } from '../lib/db'
+import { useAuth } from '../lib/AuthContext'
 
 const DEFAULT_PROFILE = {
   name: 'Your name',
@@ -13,18 +15,45 @@ const DEFAULT_PROFILE = {
 }
 
 export default function Profile() {
-  const [profile, setProfile] = usePersistentState('trailhead:profile', DEFAULT_PROFILE)
+  const { user } = useAuth()
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(profile)
+  const [draft, setDraft] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+    getProfile(user.id)
+      .then((row) => {
+        if (cancelled) return
+        setProfile(profileFromRow(row) || DEFAULT_PROFILE)
+      })
+      .catch((err) => !cancelled && setLoadError(err.message || 'Could not load your profile.'))
+      .finally(() => !cancelled && setLoading(false))
+    return () => { cancelled = true }
+  }, [user.id])
 
   function startEdit() {
     setDraft(profile)
+    setSaveError('')
     setEditing(true)
   }
 
-  function save() {
-    setProfile(draft)
-    setEditing(false)
+  async function save() {
+    setSaving(true)
+    setSaveError('')
+    try {
+      await saveProfile(user.id, draft)
+      setProfile(draft)
+      setEditing(false)
+    } catch (err) {
+      setSaveError(err.message || 'Could not save — try again.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   function updateMarker(id, field, value) {
@@ -43,6 +72,22 @@ export default function Profile() {
 
   function removeMarker(id) {
     setDraft((d) => ({ ...d, markers: d.markers.filter((m) => m.id !== id) }))
+  }
+
+  if (loading) {
+    return (
+      <section className="wrap page">
+        <p className="empty-note">Loading your profile…</p>
+      </section>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <section className="wrap page">
+        <p className="form-error" role="alert">{loadError}</p>
+      </section>
+    )
   }
 
   const initial = profile.name?.trim()?.[0]?.toUpperCase() || '?'
@@ -119,9 +164,10 @@ export default function Profile() {
             ))}
           </div>
 
+          {saveError && <p className="form-error" role="alert">{saveError}</p>}
           <div className="form-actions">
-            <button type="button" className="btn-ghost" onClick={() => setEditing(false)}>Cancel</button>
-            <button type="submit" className="btn-primary">Save</button>
+            <button type="button" className="btn-ghost" onClick={() => setEditing(false)} disabled={saving}>Cancel</button>
+            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
           </div>
         </form>
       </section>
