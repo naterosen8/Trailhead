@@ -53,7 +53,7 @@ export default function Profile() {
         <div className="sec-head">
           <div>
             <div className="tag">Editing profile</div>
-            <h2>Your life dashboard</h2>
+            <h1>Your life dashboard</h1>
           </div>
         </div>
         <form
@@ -133,7 +133,7 @@ export default function Profile() {
       <div className="sec-head">
         <div>
           <div className="tag">Profile</div>
-          <h2>Your life dashboard</h2>
+          <h1>Your life dashboard</h1>
         </div>
         <button className="btn-ghost" onClick={startEdit}>Edit</button>
       </div>
@@ -141,7 +141,7 @@ export default function Profile() {
       <div className="profile">
         <div className="profile-id">
           <div className="avatar">{initial}</div>
-          <h3>{profile.name}</h3>
+          <h2>{profile.name}</h2>
           <div className="role">{profile.location}</div>
           <div className="streak">
             <div className="num">{profile.streakNum}</div>
