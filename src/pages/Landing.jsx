@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import ThemeToggle from '../components/ThemeToggle'
+import StatsStrip from '../components/StatsStrip'
 
 export default function Landing() {
   return (
@@ -11,6 +13,7 @@ export default function Landing() {
           <nav className="kiosk-nav">
             <Link to="/demo" className="kiosk-link-secondary">See an example</Link>
             <Link to="/app/profile" className="btn-primary btn-nav">Start your trail</Link>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
@@ -32,6 +35,7 @@ export default function Landing() {
               <Link to="/app/profile" className="btn-primary btn-large">Start your trail</Link>
               <Link to="/demo" className="btn-ghost btn-large">See an example dashboard</Link>
             </div>
+            <StatsStrip />
 
             <div className="compare">
               <div><div className="plat">Instagram / TikTok</div><div className="line">Look how good my life is.</div></div>
@@ -89,6 +93,7 @@ export default function Landing() {
                 <li>Editable life-dashboard profile</li>
                 <li>Build log with create, edit, and delete</li>
                 <li>Automatic posting-streak tracking</li>
+                <li>Earned badges, computed from real activity — never asserted</li>
                 <li>Full data export / import — your data, portable</li>
               </ul>
             </div>
@@ -97,7 +102,6 @@ export default function Landing() {
               <ul>
                 <li>Circles — small groups around a shared goal</li>
                 <li>Accountability partners, matched on a specific goal</li>
-                <li>Earned skill badges, logged not asserted</li>
               </ul>
             </div>
           </div>

@@ -49,3 +49,21 @@ create policy "build logs are read/write by owner only"
   for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- Public, anonymous-readable aggregate counts for the landing page. This is
+-- the one intentional exception to "every row is private": it runs with the
+-- privileges of its owner (security definer) so it can count across all
+-- rows, but it returns two numbers only — never any row data, never anyone's
+-- name, email, or entries. Safe to expose to unauthenticated visitors.
+create or replace function public.trailhead_stats()
+returns table (total_people bigint, total_entries bigint)
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    (select count(*) from public.profiles) as total_people,
+    (select count(*) from public.build_logs) as total_entries;
+$$;
+
+grant execute on function public.trailhead_stats() to anon, authenticated;

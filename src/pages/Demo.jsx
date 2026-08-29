@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import ThemeToggle from '../components/ThemeToggle'
 
 const MARKERS = [
   { label: 'UCSB', detail: 'Communication student' },
@@ -42,6 +43,7 @@ export default function Demo() {
           </Link>
           <nav className="kiosk-nav">
             <Link to="/app/profile" className="btn-primary btn-nav">Start your trail</Link>
+            <ThemeToggle />
           </nav>
         </div>
       </header>

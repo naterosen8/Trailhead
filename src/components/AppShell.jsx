@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { exportData, importData } from '../lib/exportImport'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabaseClient'
+import ThemeToggle from './ThemeToggle'
 
 export default function AppShell() {
   const { user } = useAuth()
@@ -63,6 +64,9 @@ export default function AppShell() {
             <NavLink to="/app/log" className={({ isActive }) => (isActive ? 'active' : '')}>
               Build Log
             </NavLink>
+            <NavLink to="/app/badges" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Badges
+            </NavLink>
             <span className="kiosk-divider" aria-hidden="true" />
             <button onClick={handleExport} disabled={busy} title="Download your data as a JSON file">Export</button>
             <button onClick={() => fileInput.current?.click()} disabled={busy} title="Restore from a backup file">Import</button>
@@ -74,6 +78,7 @@ export default function AppShell() {
               style={{ display: 'none' }}
             />
             <span className="kiosk-divider" aria-hidden="true" />
+            <ThemeToggle />
             <span className="kiosk-email" title={user.email}>{user.email}</span>
             <button onClick={handleSignOut}>Sign out</button>
           </nav>

@@ -13,6 +13,14 @@
     <meta name="twitter:title" content="Trailhead" />
     <meta name="twitter:description" content="Not a highlight reel. A trail." />
     <title>Trailhead</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('trailhead:theme');
+          if (stored) document.documentElement.setAttribute('data-theme', stored);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -18,19 +18,29 @@ with, and where you're actually trying to go.
 - **Build Log** — dated entries with a fixed shape (Did / Learned / Struggled /
   Next). The app computes your posting streak from real entry dates; it isn't
   manually typed in.
+- **Badges** — earned automatically from real data (an entry logged, a
+  streak held, a profile filled in, an account a month old). Nothing is
+  self-asserted; every badge is a computed fact about what you've actually
+  done.
 - **Data export / import** — download your data as a JSON file any time, and
   restore it into any account. It appends rather than overwrites, so it's
   safe to run more than once.
+- **Password reset** — "Forgot password?" on the sign-in page emails a reset
+  link.
+- **Light/dark toggle** — follows your system by default; the toggle in the
+  header overrides it and remembers your choice.
+- A small, honest live counter on the landing page (total people and entries)
+  — a Postgres function that returns two aggregate numbers only, never any
+  row data, so it's safe to expose to signed-out visitors.
 - **`/demo`** — a static, clearly labeled example dashboard for anyone
   visiting cold, so the product doesn't look empty before you've signed up.
 
 ## What's intentionally not built yet
 
-Circles, accountability-partner matching, and earned skill badges all need
-real people on both sides to mean anything. Rather than fake that with
-placeholder data, this build proves the individual habit loop (profile +
-build log) first. See the roadmap section on the landing page for the exact
-scope split.
+Circles and accountability-partner matching need real people on both sides
+to mean anything. Rather than fake that with placeholder data, this build
+proves the individual habit loop (profile + build log + badges) first. See
+the roadmap section on the landing page for the exact scope split.
 
 ## Stack
 
@@ -47,7 +57,10 @@ storage.
 2. In the project's **SQL Editor**, paste the contents of
    [`supabase/schema.sql`](supabase/schema.sql) and run it. This creates the
    `profiles` and `build_logs` tables with row-level security already
-   locked down to "each user can only touch their own rows."
+   locked down to "each user can only touch their own rows," plus the
+   public aggregate-stats function. Already ran it before? It's safe to
+   run again — every statement is idempotent, so re-running just picks up
+   anything new.
 3. In **Project Settings → API**, copy the **Project URL** and the **anon
    public** key.
 4. Optional, for frictionless demoing: under **Authentication → Sign In /
