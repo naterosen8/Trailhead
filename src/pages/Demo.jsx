@@ -62,7 +62,7 @@ export default function Demo() {
             <span className="mark">/</span>Trailhead
           </Link>
           <nav className="kiosk-nav">
-            <Link to="/app/profile" className="btn-primary btn-nav">Start your trail</Link>
+            <Link to="/signin" state={{ mode: 'signup' }} className="btn-primary btn-nav">Start your trail</Link>
             <ThemeToggle />
           </nav>
         </div>
@@ -70,7 +70,7 @@ export default function Demo() {
       <main>
         <div className="wrap">
           <div className="demo-banner">
-            This is an example dashboard, not live data. <Link to="/app/profile">Start your own →</Link>
+            This is an example dashboard, not live data. <Link to="/signin" state={{ mode: 'signup' }}>Start your own →</Link>
           </div>
         </div>
 
@@ -157,7 +157,7 @@ export default function Demo() {
       <footer>
         <div className="wrap">
           <p className="close">People follow journeys, not just finished products.</p>
-          <p className="fine"><Link to="/">Back to Trailhead</Link> · <Link to="/app/profile">Start your own trail</Link></p>
+          <p className="fine"><Link to="/">Back to Trailhead</Link> · <Link to="/signin" state={{ mode: 'signup' }}>Start your own trail</Link></p>
         </div>
       </footer>
     </>

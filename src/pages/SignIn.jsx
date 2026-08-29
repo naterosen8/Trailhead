@@ -13,7 +13,7 @@ const TITLES = {
 export default function SignIn() {
   const { session, loading } = useAuth()
   const location = useLocation()
-  const [mode, setMode] = useState('signin') // 'signin' | 'signup' | 'reset'
+  const [mode, setMode] = useState(location.state?.mode === 'signup' ? 'signup' : 'signin') // 'signin' | 'signup' | 'reset'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')

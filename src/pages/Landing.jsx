@@ -12,7 +12,7 @@ export default function Landing() {
           </Link>
           <nav className="kiosk-nav">
             <Link to="/demo" className="kiosk-link-secondary">See an example</Link>
-            <Link to="/app/profile" className="btn-primary btn-nav">Start your trail</Link>
+            <Link to="/signin" state={{ mode: 'signup' }} className="btn-primary btn-nav">Start your trail</Link>
             <ThemeToggle />
           </nav>
         </div>
@@ -32,7 +32,7 @@ export default function Landing() {
               you're trying to go.
             </p>
             <div className="hero-cta">
-              <Link to="/app/profile" className="btn-primary btn-large">Start your trail</Link>
+              <Link to="/signin" state={{ mode: 'signup' }} className="btn-primary btn-large">Start your trail</Link>
               <Link to="/demo" className="btn-ghost btn-large">See an example dashboard</Link>
             </div>
             <StatsStrip />
@@ -116,7 +116,7 @@ export default function Landing() {
       <footer>
         <div className="wrap">
           <p className="close">People follow journeys, not just finished products.</p>
-          <p className="fine">Trailhead — an early, honest build. <Link to="/demo">See an example</Link> or <Link to="/app/profile">start your own</Link>.</p>
+          <p className="fine">Trailhead — an early, honest build. <Link to="/demo">See an example</Link> or <Link to="/signin" state={{ mode: 'signup' }}>start your own</Link>.</p>
         </div>
       </footer>
     </>
