@@ -8,6 +8,26 @@ const MARKERS = [
   { label: 'Gym', detail: '180 days consistent, tracked openly' },
 ]
 
+const DEMO_BADGES = [
+  { id: 'first-entry', name: 'First entry', earned: true },
+  { id: 'profile-complete', name: 'Profile complete', earned: true },
+  { id: 'two-streak', name: '2-entry streak', earned: true },
+  { id: 'one-month', name: 'One month on the trail', earned: true },
+  { id: 'five-entries', name: '5 entries logged', earned: false, hint: '3 of 5 logged so far.' },
+  { id: 'four-streak', name: '4-entry streak', earned: false, hint: 'Current streak: 2. Needs 4 in a row.' },
+  { id: 'twenty-entries', name: '20 entries logged', earned: false, hint: '3 of 20 logged so far.' },
+]
+
+const BADGE_ICONS = {
+  'first-entry': <path d="M6 21V4M6 4h12l-3 4 3 4H6" />,
+  'profile-complete': <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></>,
+  'five-entries': <path d="M4 7h16M4 12h16M4 17h10" />,
+  'two-streak': <path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" />,
+  'four-streak': <path d="M6 9l6-6 6 6M6 16l6-6 6 6" />,
+  'twenty-entries': <path d="M8 4h8v4a4 4 0 0 1-8 0V4ZM12 12v4M8 20h8M4 5h4v2a3 3 0 0 1-3 3M20 5h-4v2a3 3 0 0 0 3 3" />,
+  'one-month': <path d="M3 5h18v16H3V5ZM3 9h18M8 3v4M16 3v4" />,
+}
+
 const ENTRIES = [
   {
     week: '01', date: '2026-06-08', title: 'Started applying',
@@ -112,6 +132,26 @@ export default function Demo() {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="wrap page">
+          <div className="sec-head">
+            <div>
+              <div className="tag">Example badges</div>
+              <h2>Earned, not issued</h2>
+            </div>
+          </div>
+          <div className="patches">
+            {DEMO_BADGES.map((b) => (
+              <div className={`patch${b.earned ? '' : ' locked'}`} key={b.id}>
+                <div className="patch-shape">
+                  <svg viewBox="0 0 24 24">{BADGE_ICONS[b.id]}</svg>
+                </div>
+                <div className="patch-name">{b.name}</div>
+                <div className="patch-sub">{b.earned ? 'Earned' : b.hint}</div>
+              </div>
+            ))}
+          </div>
         </section>
       </main>
       <footer>
