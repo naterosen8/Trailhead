@@ -46,7 +46,8 @@ export default function BuildLog() {
         await updateEntry(editingId, form)
         setEntries(entries.map((entry) => (entry.id === editingId ? { ...entry, ...form } : entry)))
       } else {
-        const created = await createEntry(user.id, form, entries.length + 1)
+        const nextWeek = entries.reduce((max, e) => Math.max(max, e.week), 0) + 1
+        const created = await createEntry(user.id, form, nextWeek)
         setEntries([created, ...entries])
       }
       closeForm()

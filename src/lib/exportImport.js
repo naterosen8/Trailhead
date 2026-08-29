@@ -39,7 +39,7 @@ export async function importData(file, userId) {
 
   const logs = Array.isArray(parsed.data.logs) ? parsed.data.logs : []
   const existing = await listEntries(userId)
-  let week = existing.length
+  let week = existing.reduce((max, e) => Math.max(max, e.week), 0)
   for (const entry of logs) {
     week += 1
     await insertEntry(userId, { ...entry, week, date: entry.date || new Date().toISOString().slice(0, 10) })
