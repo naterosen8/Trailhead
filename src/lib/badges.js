@@ -3,7 +3,7 @@ import { computeStreak } from './streak'
 // Every badge here is derived from real data already in the database —
 // nothing is self-asserted. That's the whole point: a badge means the
 // thing actually happened.
-export function computeBadges({ profile, entries, accountCreatedAt }) {
+export function computeBadges({ profile, entries, accountCreatedAt, cheersGiven = 0, cheersReceived = 0 }) {
   const streak = computeStreak(entries)
   const accountDays = accountCreatedAt
     ? Math.floor((Date.now() - new Date(accountCreatedAt).getTime()) / 86400000)
@@ -57,6 +57,24 @@ export function computeBadges({ profile, entries, accountCreatedAt }) {
       name: 'One month on the trail',
       hint: `Account is ${accountDays} of 30 days old.`,
       earned: accountDays >= 30,
+    },
+    {
+      id: 'joined-circle',
+      name: 'Joined a circle',
+      hint: 'Pick a circle from your profile.',
+      earned: Boolean(profile?.circle),
+    },
+    {
+      id: 'cheer-given',
+      name: 'Gave a cheer',
+      hint: 'React to someone else\'s entry in your circle.',
+      earned: cheersGiven >= 1,
+    },
+    {
+      id: 'cheer-received',
+      name: 'Got cheered',
+      hint: 'Someone in your circle reacted to one of your entries.',
+      earned: cheersReceived >= 1,
     },
   ]
 }

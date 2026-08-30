@@ -194,6 +194,14 @@ export default function Profile() {
     )
   }
 
+  const steps = [
+    { done: profile.name !== 'Your name' && Boolean(profile.name.trim()), label: 'Set your name and where you are' },
+    { done: profile.markers.some((m) => m.label?.trim() && m.label !== 'What you do'), label: 'Add a real marker — what you actually do' },
+    { done: profile.goal !== 'What you\'re building toward' && Boolean(profile.goal.trim()), label: 'Say where you\'re headed' },
+    { done: Boolean(profile.circle), label: 'Join a circle', to: '/app/circles' },
+  ]
+  const allDone = steps.every((s) => s.done)
+
   return (
     <section className="wrap page">
       <div className="sec-head">
@@ -203,6 +211,20 @@ export default function Profile() {
         </div>
         <button className="btn-ghost" onClick={startEdit}>Edit</button>
       </div>
+
+      {!allDone && (
+        <div className="getting-started">
+          <div className="tag">Getting started</div>
+          <ul>
+            {steps.map((s) => (
+              <li key={s.label} className={s.done ? 'done' : ''}>
+                <span className="check" aria-hidden="true">{s.done ? '✓' : ''}</span>
+                {s.to && !s.done ? <Link to={s.to}>{s.label}</Link> : <span>{s.label}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="profile">
         <div className="profile-id">

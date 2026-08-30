@@ -13,6 +13,9 @@ const DEMO_BADGES = [
   { id: 'profile-complete', name: 'Profile complete', earned: true },
   { id: 'two-streak', name: '2-entry streak', earned: true },
   { id: 'one-month', name: 'One month on the trail', earned: true },
+  { id: 'joined-circle', name: 'Joined a circle', earned: true },
+  { id: 'cheer-received', name: 'Got cheered', earned: true },
+  { id: 'cheer-given', name: 'Gave a cheer', earned: false, hint: "React to someone else's entry in your circle." },
   { id: 'five-entries', name: '5 entries logged', earned: false, hint: '3 of 5 logged so far.' },
   { id: 'four-streak', name: '4-entry streak', earned: false, hint: 'Current streak: 2. Needs 4 in a row.' },
   { id: 'twenty-entries', name: '20 entries logged', earned: false, hint: '3 of 20 logged so far.' },
@@ -26,6 +29,9 @@ const BADGE_ICONS = {
   'four-streak': <path d="M6 9l6-6 6 6M6 16l6-6 6 6" />,
   'twenty-entries': <path d="M8 4h8v4a4 4 0 0 1-8 0V4ZM12 12v4M8 20h8M4 5h4v2a3 3 0 0 1-3 3M20 5h-4v2a3 3 0 0 0 3 3" />,
   'one-month': <path d="M3 5h18v16H3V5ZM3 9h18M8 3v4M16 3v4" />,
+  'joined-circle': <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></>,
+  'cheer-given': <path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" />,
+  'cheer-received': <><path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" /><path d="M4 4l2 2M20 4l-2 2" /></>,
 }
 
 const DEMO_CIRCLE_FEED = [

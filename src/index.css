@@ -258,6 +258,21 @@ input:focus, textarea:focus, button:focus-visible {
 }
 .circle-badge:hover { text-decoration: underline; }
 
+.getting-started {
+  border: 1px solid var(--contour); border-radius: 4px; padding: 20px 22px;
+  background: var(--pine-tint); margin-bottom: 24px;
+}
+.getting-started ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.getting-started li { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; color: var(--ink-soft); }
+.getting-started li.done { color: var(--ink-faint); text-decoration: line-through; }
+.getting-started li a { color: var(--pine); text-decoration: underline; font-weight: 600; }
+.getting-started .check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--contour-strong);
+  font-size: 0.7rem; color: var(--pine); flex: none;
+}
+.getting-started li.done .check { background: var(--pine); border-color: var(--pine); color: var(--paper); }
+
 .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
 .form-error { color: var(--blaze); font-size: 0.86rem; margin: -6px 0 0; }
 .form-notice { color: var(--pine); font-size: 0.86rem; margin: -6px 0 0; }

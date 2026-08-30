@@ -180,3 +180,15 @@ export async function getCheersReceivedCount(entryIds) {
   if (error) throw error
   return count || 0
 }
+
+// How many cheers you've given out — your own rows in the cheers table,
+// which the "auth.uid() = user_id" half of the select policy always lets
+// you see regardless of whether those entries are still public.
+export async function getCheersGivenCount(userId) {
+  const { count, error } = await supabase
+    .from('cheers')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+  if (error) throw error
+  return count || 0
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getProfile, listEntries, profileFromRow } from '../lib/db'
+import { getCheersGivenCount, getCheersReceivedCount, getProfile, listEntries, profileFromRow } from '../lib/db'
 import { computeBadges } from '../lib/badges'
 import { useAuth } from '../lib/AuthContext'
 
@@ -11,6 +11,9 @@ const ICONS = {
   'four-streak': <path d="M6 9l6-6 6 6M6 16l6-6 6 6" />,
   'twenty-entries': <path d="M8 4h8v4a4 4 0 0 1-8 0V4ZM12 12v4M8 20h8M4 5h4v2a3 3 0 0 1-3 3M20 5h-4v2a3 3 0 0 0 3 3" />,
   'one-month': <path d="M3 5h18v16H3V5ZM3 9h18M8 3v4M16 3v4" />,
+  'joined-circle': <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></>,
+  'cheer-given': <path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" />,
+  'cheer-received': <><path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" /><path d="M4 4l2 2M20 4l-2 2" /></>,
 }
 
 export default function Badges() {
@@ -20,10 +23,18 @@ export default function Badges() {
 
   useEffect(() => {
     let cancelled = false
-    Promise.all([getProfile(user.id), listEntries(user.id)])
-      .then(([profileRow, entries]) => {
+    Promise.all([getProfile(user.id), listEntries(user.id), getCheersGivenCount(user.id)])
+      .then(async ([profileRow, entries, cheersGiven]) => {
         if (cancelled) return
-        setBadges(computeBadges({ profile: profileFromRow(profileRow), entries, accountCreatedAt: user.created_at }))
+        const cheersReceived = await getCheersReceivedCount(entries.map((e) => e.id)).catch(() => 0)
+        if (cancelled) return
+        setBadges(computeBadges({
+          profile: profileFromRow(profileRow),
+          entries,
+          accountCreatedAt: user.created_at,
+          cheersGiven,
+          cheersReceived,
+        }))
       })
       .catch((err) => !cancelled && setLoadError(err.message || 'Could not load your badges.'))
     return () => { cancelled = true }
