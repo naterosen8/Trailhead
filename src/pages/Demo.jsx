@@ -28,6 +28,24 @@ const BADGE_ICONS = {
   'one-month': <path d="M3 5h18v16H3V5ZM3 9h18M8 3v4M16 3v4" />,
 }
 
+const DEMO_CIRCLE_FEED = [
+  {
+    author: 'Maya', date: '2026-08-27', title: 'Landed a coffee chat',
+    did: 'A cold email from three weeks ago finally got a reply — 20-minute call booked.',
+    cheers: 4, cheeredByMe: true,
+  },
+  {
+    author: 'Nathaniel', date: '2026-08-24', title: 'Applied to 5 internships',
+    did: 'Applied to 5, cold-emailed 3 alumni first.',
+    cheers: 2, cheeredByMe: false,
+  },
+  {
+    author: 'Devon', date: '2026-08-22', title: 'First mock interview',
+    did: 'Ran a practice interview with a career center advisor — rougher than expected.',
+    cheers: 1, cheeredByMe: false,
+  },
+]
+
 const ENTRIES = [
   {
     week: '01', date: '2026-06-08', title: 'Started applying',
@@ -152,6 +170,37 @@ export default function Demo() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="wrap page">
+          <div className="sec-head">
+            <div>
+              <div className="tag">Example circle — College students</div>
+              <h2>Belonging before followers</h2>
+            </div>
+          </div>
+          <p className="sec-note circle-intro">
+            Nathaniel opted into the College students circle. He sees public entries from other
+            people in it — and they see his.
+          </p>
+          <ul className="waypoints circle-feed">
+            {DEMO_CIRCLE_FEED.map((entry) => (
+              <li className="waypoint" key={entry.title}>
+                <span className="pin" />
+                <div className="wp-head">
+                  <span className="wk">{entry.author} · {entry.date}</span>
+                  <h3>{entry.title}</h3>
+                </div>
+                <div className="wp-body">
+                  <div className="wp-row"><span className="k">Did</span><span className="v">{entry.did}</span></div>
+                </div>
+                <div className={`cheer-btn${entry.cheeredByMe ? ' cheered' : ''}`}>
+                  <svg viewBox="0 0 24 24"><path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" /></svg>
+                  {entry.cheers} Cheer{entry.cheers === 1 ? '' : 's'}
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
       <footer>

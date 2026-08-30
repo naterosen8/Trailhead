@@ -32,15 +32,27 @@ with, and where you're actually trying to go.
 - A small, honest live counter on the landing page (total people and entries)
   — a Postgres function that returns two aggregate numbers only, never any
   row data, so it's safe to expose to signed-out visitors.
+- **A contribution calendar** on the build log — the last 16 weeks of your
+  actual posting activity, GitHub-style, built from your real entries.
+- **Circles** — opt into one shared-goal circle (College students,
+  Entrepreneurs, Fitness, Creators, Investors, Outdoors, Trades) and see a
+  real feed of other public members' entries there. Off by default: your
+  profile and entries stay fully private until you explicitly turn on
+  visibility, and even then only your display name and what you've posted
+  are ever shown — never your email or account details. Verified directly
+  against Postgres, not just in the UI: a private member's entries never
+  appear in another user's feed, and RLS rejects any attempt to cheer an
+  entry that isn't actually public.
+- **Cheers** — a lightweight, real reaction on entries in your circle. One
+  per person per entry, enforced by a database constraint, not just the UI.
 - **`/demo`** — a static, clearly labeled example dashboard for anyone
   visiting cold, so the product doesn't look empty before you've signed up.
 
 ## What's intentionally not built yet
 
-Circles and accountability-partner matching need real people on both sides
-to mean anything. Rather than fake that with placeholder data, this build
-proves the individual habit loop (profile + build log + badges) first. See
-the roadmap section on the landing page for the exact scope split.
+Accountability-partner matching needs an active circle to match people
+from — it's next once Circles has real usage behind it, rather than being
+built against placeholder data.
 
 ## Stack
 
@@ -56,11 +68,12 @@ storage.
    (takes about two minutes to provision).
 2. In the project's **SQL Editor**, paste the contents of
    [`supabase/schema.sql`](supabase/schema.sql) and run it. This creates the
-   `profiles` and `build_logs` tables with row-level security already
-   locked down to "each user can only touch their own rows," plus the
-   public aggregate-stats function. Already ran it before? It's safe to
-   run again — every statement is idempotent, so re-running just picks up
-   anything new.
+   `profiles`, `build_logs`, and `cheers` tables with row-level security
+   locked down to "each user can only touch their own rows" (plus the
+   opt-in circle visibility), and the security-definer functions behind the
+   public stats counter and the circle feed. Already ran it before? It's
+   safe to run again — every statement is idempotent, so re-running just
+   picks up anything new, including these additions.
 3. In **Project Settings → API**, copy the **Project URL** and the **anon
    public** key.
 4. Optional, for frictionless demoing: under **Authentication → Sign In /
@@ -107,6 +120,6 @@ crashing, which is what you'll see before step 2 above.
 ## Deploying
 
 Static build, deployable anywhere that serves static files. `vercel.json`
-includes a rewrite so client-side routes (`/demo`, `/signin`, `/app/profile`,
-`/app/log`) resolve correctly on direct navigation or refresh, not just via
-in-app links.
+includes a rewrite so every client-side route (`/demo`, `/signin`,
+`/app/profile`, `/app/log`, `/app/badges`, `/app/circles`, …) resolves
+correctly on direct navigation or refresh, not just via in-app links.

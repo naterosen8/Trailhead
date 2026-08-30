@@ -94,21 +94,23 @@ export default function Landing() {
                 <li>Build log with create, edit, and delete</li>
                 <li>Automatic posting-streak tracking</li>
                 <li>Earned badges, computed from real activity — never asserted</li>
+                <li>A contribution calendar of your actual posting history</li>
+                <li>Circles — opt-in public feeds by shared goal, with cheers</li>
                 <li>Full data export / import — your data, portable</li>
               </ul>
             </div>
             <div className="roadmap-col">
-              <div className="roadmap-label next">Next, once the core loop is proven</div>
+              <div className="roadmap-label next">Next</div>
               <ul>
-                <li>Circles — small groups around a shared goal</li>
                 <li>Accountability partners, matched on a specific goal</li>
               </ul>
             </div>
           </div>
           <p className="roadmap-note">
-            Circles and accountability matching need real people on both sides to mean anything —
-            we're building the individual habit loop first and proving it holds before adding the
-            social layer on top of it.
+            Circle visibility is opt-in and off by default — your profile and entries stay private
+            until you turn it on, and even then only your display name and what you've posted are
+            ever shown, never your email or account details. Accountability matching needs a real,
+            active circle to match people from, so it's next once Circles has real usage behind it.
           </p>
         </section>
       </main>

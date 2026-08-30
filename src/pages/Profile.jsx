@@ -1,18 +1,9 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { uid } from '../lib/storage'
-import { getProfile, profileFromRow, saveProfile } from '../lib/db'
+import { defaultProfile, getProfile, profileFromRow, saveProfile } from '../lib/db'
 import { useAuth } from '../lib/AuthContext'
-
-const DEFAULT_PROFILE = {
-  name: 'Your name',
-  location: 'Where you are',
-  streakLabel: 'day streak',
-  streakNum: 0,
-  goal: 'What you\'re building toward',
-  markers: [
-    { id: uid(), label: 'What you do', detail: 'Add a short detail' },
-  ],
-}
+import { CIRCLES, circleLabel } from '../lib/circles'
 
 export default function Profile() {
   const { user } = useAuth()
@@ -29,7 +20,7 @@ export default function Profile() {
     getProfile(user.id)
       .then((row) => {
         if (cancelled) return
-        setProfile(profileFromRow(row) || DEFAULT_PROFILE)
+        setProfile(profileFromRow(row) || defaultProfile())
       })
       .catch((err) => !cancelled && setLoadError(err.message || 'Could not load your profile.'))
       .finally(() => !cancelled && setLoading(false))
@@ -164,6 +155,35 @@ export default function Profile() {
             ))}
           </div>
 
+          <div className="circle-settings">
+            <label>
+              Circle
+              <select
+                value={draft.circle || ''}
+                onChange={(e) => setDraft({ ...draft, circle: e.target.value || null })}
+              >
+                <option value="">No circle</option>
+                {CIRCLES.map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={draft.isPublic}
+                onChange={(e) => setDraft({ ...draft, isPublic: e.target.checked })}
+              />
+              <span>
+                Make my profile and build log visible in my circle
+                <span className="field-note">
+                  Other people in the same circle will see your entries and display name.
+                  Everything else about your account stays private. Off by default.
+                </span>
+              </span>
+            </label>
+          </div>
+
           {saveError && <p className="form-error" role="alert">{saveError}</p>}
           <div className="form-actions">
             <button type="button" className="btn-ghost" onClick={() => setEditing(false)} disabled={saving}>Cancel</button>
@@ -193,6 +213,12 @@ export default function Profile() {
             <div className="num">{profile.streakNum}</div>
             <div className="cap">{profile.streakLabel}</div>
           </div>
+          {profile.circle && (
+            <Link to="/app/circles" className="circle-badge">
+              {circleLabel(profile.circle)}
+              {profile.isPublic ? ' · public' : ' · private'}
+            </Link>
+          )}
         </div>
         <div>
           <ul className="markers">

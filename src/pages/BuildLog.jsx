@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { computeStreak, daysSinceLastEntry } from '../lib/streak'
 import { createEntry, deleteEntry, listEntries, updateEntry } from '../lib/db'
 import { useAuth } from '../lib/AuthContext'
+import ContributionGrid from '../components/ContributionGrid'
 
 const EMPTY_FORM = { title: '', did: '', learned: '', struggled: '', next: '' }
 
@@ -127,6 +128,13 @@ export default function BuildLog() {
         <p className="streak-warning">
           It's been {daysSince} days since your last entry — log one soon to keep the streak alive.
         </p>
+      )}
+
+      {entries.length > 0 && (
+        <div className="contribution-wrap">
+          <div className="contribution-label">Last 16 weeks</div>
+          <ContributionGrid entries={entries} />
+        </div>
       )}
 
       {showForm && (
