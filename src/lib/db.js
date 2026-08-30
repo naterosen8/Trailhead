@@ -167,3 +167,16 @@ export async function removeCheer(entryId, userId) {
   const { error } = await supabase.from('cheers').delete().eq('entry_id', entryId).eq('user_id', userId)
   if (error) throw error
 }
+
+// How many cheers your own entries have received in total. Relies on the
+// "visible to the entry owner" half of the cheers select policy — no new
+// grant needed, since you're only ever asking about your own entries.
+export async function getCheersReceivedCount(entryIds) {
+  if (!entryIds.length) return 0
+  const { count, error } = await supabase
+    .from('cheers')
+    .select('id', { count: 'exact', head: true })
+    .in('entry_id', entryIds)
+  if (error) throw error
+  return count || 0
+}

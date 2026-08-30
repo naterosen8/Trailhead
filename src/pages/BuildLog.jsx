@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { computeStreak, daysSinceLastEntry } from '../lib/streak'
-import { createEntry, deleteEntry, listEntries, updateEntry } from '../lib/db'
+import { createEntry, deleteEntry, getCheersReceivedCount, listEntries, updateEntry } from '../lib/db'
 import { useAuth } from '../lib/AuthContext'
 import ContributionGrid from '../components/ContributionGrid'
 
@@ -9,6 +9,7 @@ const EMPTY_FORM = { title: '', did: '', learned: '', struggled: '', next: '' }
 export default function BuildLog() {
   const { user } = useAuth()
   const [entries, setEntries] = useState([])
+  const [cheersReceived, setCheersReceived] = useState(0)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
   const [form, setForm] = useState(EMPTY_FORM)
@@ -24,6 +25,10 @@ export default function BuildLog() {
         if (cancelled) return
         setEntries(rows)
         if (rows.length === 0) setShowForm(true)
+        // Non-critical: if this fails, the page still works, just without the stat.
+        getCheersReceivedCount(rows.map((r) => r.id))
+          .then((count) => !cancelled && setCheersReceived(count))
+          .catch(() => {})
       })
       .catch((err) => !cancelled && setLoadError(err.message || 'Could not load your build log.'))
       .finally(() => !cancelled && setLoading(false))
@@ -111,6 +116,12 @@ export default function BuildLog() {
           <h1>What you did, not what you performed</h1>
         </div>
         <div className="sec-head-actions">
+          {cheersReceived > 0 && (
+            <div className="streak-pill cheers-pill">
+              <span className="num">{cheersReceived}</span>
+              <span className="cap">{cheersReceived === 1 ? 'cheer received' : 'cheers received'}</span>
+            </div>
+          )}
           {streak > 0 && (
             <div className={`streak-pill${streakAtRisk ? ' at-risk' : ''}`}>
               <span className="num">{streak}</span>

@@ -323,6 +323,8 @@ input:focus, textarea:focus, button:focus-visible {
 .streak-pill .num { font-family: var(--mono); font-weight: 600; color: var(--pine); font-size: 1rem; }
 .streak-pill .cap { font-size: 0.72rem; color: var(--ink-soft); }
 .streak-pill.at-risk { background: var(--blaze-tint); }
+.streak-pill.cheers-pill { background: var(--blaze-tint); }
+.streak-pill.cheers-pill .num { color: var(--blaze-ink); }
 .streak-pill.at-risk .num { color: var(--blaze-ink); }
 .streak-warning {
   font-size: 0.86rem; color: var(--blaze-ink); margin: -14px 0 24px;
