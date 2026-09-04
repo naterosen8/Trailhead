@@ -45,14 +45,17 @@ with, and where you're actually trying to go.
   entry that isn't actually public.
 - **Cheers** — a lightweight, real reaction on entries in your circle. One
   per person per entry, enforced by a database constraint, not just the UI.
+- **Accountability Partners** — turn on "looking for an accountability
+  partner" and you can see, and directly message, other opted-in people in
+  your circle. Opt-in is mutual and enforced by the database, not just the
+  UI: you can only message someone who is in your circle, public, and has
+  also opted in — never a one-sided DM. Messages are visible only to the two
+  people in the conversation, and once sent are permanent (no edit/delete).
+  Verified directly against Postgres: cross-circle messages, messages to
+  someone who hasn't opted in, and attempts to send as someone else are all
+  rejected by row-level security, independent of the UI.
 - **`/demo`** — a static, clearly labeled example dashboard for anyone
   visiting cold, so the product doesn't look empty before you've signed up.
-
-## What's intentionally not built yet
-
-Accountability-partner matching needs an active circle to match people
-from — it's next once Circles has real usage behind it, rather than being
-built against placeholder data.
 
 ## Stack
 
@@ -68,10 +71,11 @@ storage.
    (takes about two minutes to provision).
 2. In the project's **SQL Editor**, paste the contents of
    [`supabase/schema.sql`](supabase/schema.sql) and run it. This creates the
-   `profiles`, `build_logs`, and `cheers` tables with row-level security
-   locked down to "each user can only touch their own rows" (plus the
-   opt-in circle visibility), and the security-definer functions behind the
-   public stats counter and the circle feed. Already ran it before? It's
+   `profiles`, `build_logs`, `cheers`, and `messages` tables with row-level
+   security locked down to "each user can only touch their own rows" (plus
+   the opt-in circle visibility and mutual-opt-in messaging), and the
+   security-definer functions behind the public stats counter, the circle
+   feed, and accountability-partner matching. Already ran it before? It's
    safe to run again — every statement is idempotent, so re-running just
    picks up anything new, including these additions.
 3. In **Project Settings → API**, copy the **Project URL** and the **anon
@@ -121,5 +125,5 @@ crashing, which is what you'll see before step 2 above.
 
 Static build, deployable anywhere that serves static files. `vercel.json`
 includes a rewrite so every client-side route (`/demo`, `/signin`,
-`/app/profile`, `/app/log`, `/app/badges`, `/app/circles`, …) resolves
-correctly on direct navigation or refresh, not just via in-app links.
+`/app/profile`, `/app/log`, `/app/badges`, `/app/circles`, `/app/partners`, …)
+resolves correctly on direct navigation or refresh, not just via in-app links.

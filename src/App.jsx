@@ -10,6 +10,7 @@ import Profile from './pages/Profile'
 import BuildLog from './pages/BuildLog'
 import Badges from './pages/Badges'
 import Circles from './pages/Circles'
+import Partners from './pages/Partners'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="log" element={<BuildLog />} />
             <Route path="badges" element={<Badges />} />
             <Route path="circles" element={<Circles />} />
+            <Route path="partners" element={<Partners />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />

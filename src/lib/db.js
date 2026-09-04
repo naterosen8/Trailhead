@@ -18,6 +18,7 @@ export function defaultProfile() {
     ],
     circle: null,
     isPublic: false,
+    lookingForPartner: false,
   }
 }
 
@@ -38,6 +39,7 @@ export async function saveProfile(userId, profile) {
     markers: profile.markers,
     circle: profile.circle || null,
     is_public: Boolean(profile.isPublic),
+    looking_for_partner: Boolean(profile.lookingForPartner),
     updated_at: new Date().toISOString(),
   })
   if (error) throw error
@@ -56,6 +58,7 @@ export function profileFromRow(row) {
     markers: row.markers || [],
     circle: row.circle || null,
     isPublic: Boolean(row.is_public),
+    lookingForPartner: Boolean(row.looking_for_partner),
   }
 }
 
@@ -144,7 +147,9 @@ export async function getCircleFeed(circle, limit = 60) {
     next: row.next,
     date: row.entry_date,
     createdAt: row.created_at,
+    authorId: row.author_id,
     authorName: row.author_name,
+    authorLookingForPartner: Boolean(row.author_looking_for_partner),
     cheerCount: Number(row.cheer_count),
     cheeredByMe: Boolean(row.cheered_by_me),
   }))
@@ -191,4 +196,64 @@ export async function getCheersGivenCount(userId) {
     .eq('user_id', userId)
   if (error) throw error
   return count || 0
+}
+
+// --- Accountability Partners ---
+// Messaging is opt-in on both ends (see can_message() in schema.sql): you
+// only ever reach someone who is in your circle and has also turned on
+// "looking for a partner." The RLS policies enforce this independently of
+// anything checked here — this layer just shapes the calls and results.
+
+export async function getCirclePartners(circle) {
+  const { data, error } = await supabase.rpc('circle_partners', { p_circle: circle })
+  if (error) throw error
+  return (data || []).map((row) => ({
+    userId: row.user_id,
+    name: row.name,
+    goal: row.goal,
+  }))
+}
+
+export async function getConversations() {
+  const { data, error } = await supabase.rpc('list_conversations')
+  if (error) throw error
+  return (data || []).map((row) => ({
+    partnerId: row.partner_id,
+    partnerName: row.partner_name,
+    lastBody: row.last_body,
+    lastCreatedAt: row.last_created_at,
+    lastSenderId: row.last_sender_id,
+  }))
+}
+
+export async function getMessageThread(myId, partnerId) {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .or(`and(sender_id.eq.${myId},recipient_id.eq.${partnerId}),and(sender_id.eq.${partnerId},recipient_id.eq.${myId})`)
+    .order('created_at', { ascending: true })
+  if (error) throw error
+  return (data || []).map((row) => ({
+    id: row.id,
+    senderId: row.sender_id,
+    recipientId: row.recipient_id,
+    body: row.body,
+    createdAt: row.created_at,
+  }))
+}
+
+export async function sendMessage(senderId, recipientId, body) {
+  const { data, error } = await supabase
+    .from('messages')
+    .insert({ sender_id: senderId, recipient_id: recipientId, body })
+    .select()
+    .single()
+  if (error) throw error
+  return {
+    id: data.id,
+    senderId: data.sender_id,
+    recipientId: data.recipient_id,
+    body: data.body,
+    createdAt: data.created_at,
+  }
 }

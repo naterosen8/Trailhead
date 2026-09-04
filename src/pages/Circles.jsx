@@ -175,7 +175,12 @@ export default function Circles() {
                 <li className="waypoint" key={entry.id}>
                   <span className="pin" />
                   <div className="wp-head">
-                    <span className="wk">{entry.authorName} · {entry.date}</span>
+                    <span className="wk">
+                      {entry.authorName} · {entry.date}
+                      {entry.authorLookingForPartner && entry.authorId !== user.id && (
+                        <Link to="/app/partners" className="partner-flag">looking for a partner</Link>
+                      )}
+                    </span>
                     <h3>{entry.title}</h3>
                   </div>
                   <div className="wp-body">

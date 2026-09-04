@@ -70,6 +70,9 @@ export default function AppShell() {
             <NavLink to="/app/circles" className={({ isActive }) => (isActive ? 'active' : '')}>
               Circles
             </NavLink>
+            <NavLink to="/app/partners" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Partners
+            </NavLink>
             <span className="kiosk-divider" aria-hidden="true" />
             <button onClick={handleExport} disabled={busy} title="Download your data as a JSON file">Export</button>
             <button onClick={() => fileInput.current?.click()} disabled={busy} title="Restore from a backup file">Import</button>

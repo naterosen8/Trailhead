@@ -34,6 +34,11 @@ const BADGE_ICONS = {
   'cheer-received': <><path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" /><path d="M4 4l2 2M20 4l-2 2" /></>,
 }
 
+const DEMO_PARTNERS = [
+  { name: 'Priya', goal: 'Ship a small SaaS side project by December.' },
+  { name: 'Jordan', goal: 'Build a portfolio worth showing to a hiring manager.' },
+]
+
 const DEMO_CIRCLE_FEED = [
   {
     author: 'Maya', date: '2026-08-27', title: 'Landed a coffee chat',
@@ -204,6 +209,30 @@ export default function Demo() {
                   <svg viewBox="0 0 24 24"><path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-1-2-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-10Z" /></svg>
                   {entry.cheers} Cheer{entry.cheers === 1 ? '' : 's'}
                 </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="wrap page">
+          <div className="sec-head">
+            <div>
+              <div className="tag">Example — Accountability partners</div>
+              <h2>Opted in, in College students</h2>
+            </div>
+          </div>
+          <p className="sec-note circle-intro">
+            Nathaniel turned on "looking for an accountability partner." He can now see, and message,
+            other people in his circle who've opted in too — never anyone who hasn't.
+          </p>
+          <ul className="partner-list">
+            {DEMO_PARTNERS.map((p) => (
+              <li className="partner-card" key={p.name}>
+                <div>
+                  <div className="partner-name">{p.name}</div>
+                  <div className="partner-goal">{p.goal}</div>
+                </div>
+                <span className="btn-ghost" aria-hidden="true">Message</span>
               </li>
             ))}
           </ul>
